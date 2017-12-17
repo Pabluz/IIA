@@ -9,8 +9,6 @@ class JogoHobbes(jogos_iia.Game) :
            "*": operator.mul,
            "/": operator.div}
 
-
-
     @staticmethod
     def outro_jogador(j) :
         return 'rei_preto' if j == 'rei_branco' else 'rei_preto'
@@ -19,7 +17,8 @@ class JogoHobbes(jogos_iia.Game) :
     	return 'p' if j == 'p' else 'b'
     #construtor do jogo hobbes
     def _init_(self):
-        return null
+        self.linhas = 5
+        self.colunas = 5
 
 
     #retorna jogadas possiveis de um dado estado
@@ -118,7 +117,7 @@ class JogoHobbes(jogos_iia.Game) :
 
 
     #retorna estado que se obtem a fazer uma jogada
-    def result(self, state,move):
+    def result(self, state, move):
         return null
 
 	#Utilidade do estado, na perspectiva do jogador que tem a vez.  Rele-
