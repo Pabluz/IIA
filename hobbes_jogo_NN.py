@@ -120,21 +120,47 @@ class JogoHobbes(jogos_iia.Game) :
     def result(self, state,move):
         return null
 
+    # Cálculo da utilidade de um estado na perspectiva de um dado jogador.
+    # Deverá ter o valor 1, para o caso de vitória, ou -1 em caso de derrota.
+    def utility(self, state, jogador):
+        final = 0
+        adversario = JogoHobbes.outro_jogador(jogador)
 
-    #Cálculo da utilidade de um estado na perspectiva de um dado jogador.
-    #Deverá ter o valor 1, para o caso de vitória, ou -1 em caso de derrota.
-    def utility(self, state,jogador):
-        return null
+        return final
 
-
-    #metodo booleano que verific se um dado estado é final
+    # metodo booleano que verific se um dado estado é final
     def terminal_test(self, state):
         return null
 
-
-    #Mostra uma representação de um estado do jogo
+    # Mostra uma representação de um estado do jogo
     def display(self, state):
-        return null
+
+        tabuleiro = state.board
+        print("Tabuleiro actual:")
+        for x in range(1, self.linhas + 1):
+            print('|')
+            for y in range(1, self.colunas + 1):
+
+                if board[(x, y)] == 'b':
+                    print('b|')
+                elif board[(x, y)] == 'p':
+                    print('p|')
+                elif board[(x, y)] == 'n':
+                    print('n|')
+                else:
+                    print(' ')
+            print('|')
+            print('\n -----------')
+
+        if self.terminal_test(state):
+            print("Fim do jogo")
+        else:
+            print("Próximo jogador:{}\n".format(state.to_move))
+
+
+
+
+
 
 
 
