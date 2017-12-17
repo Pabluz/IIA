@@ -15,7 +15,8 @@ class JogoHobbes(jogos_iia.Game) :
     def outro_jogador(j) :
         return 'rei_preto' if j == 'rei_branco' else 'rei_preto'
 
-
+    def conv_peca(j) :
+    	return 'p' if j == 'p' else 'b'
     #construtor do jogo hobbes
     def _init_(self):
         return null
@@ -120,13 +121,33 @@ class JogoHobbes(jogos_iia.Game) :
     def result(self, state,move):
         return null
 
-    # Cálculo da utilidade de um estado na perspectiva de um dado jogador.
-    # Deverá ter o valor 1, para o caso de vitória, ou -1 em caso de derrota.
+	#Utilidade do estado, na perspectiva do jogador que tem a vez.  Rele-
+	#vante apenas para os estados finais:  1, -1, ou 0, consoante seja de vitoria,
+	#derrota ou empate.
     def utility(self, state, jogador):
-        final = 0
-        adversario = JogoHobbes.outro_jogador(jogador)
 
-        return final
+        jog_peca = conv_peca(jogador)
+      	adv_peca = 'b' if jog_peca == 'p' else 'p'
+        tabuleiro = state.board
+        string = ''
+        concat = ''
+
+        for x in range(1, self.linhas+1):
+        	for y in range(1, self.colunas+1):
+        		if tabuleiro[(x,y)] == 'b':
+        			string = 'b'
+        		if tabuleiro[(x,y)] == 'p':
+        			string = 'p'
+        		if string != '':
+        			concat = concat + string
+        			string = ''
+
+        if concat == jog_peca:
+        	return 1
+        elif concat == adv_peca:
+        	return -1
+        else:
+        	return 0
 
     # metodo booleano que verific se um dado estado é final
     def terminal_test(self, state):
@@ -141,11 +162,11 @@ class JogoHobbes(jogos_iia.Game) :
             print('|')
             for y in range(1, self.colunas + 1):
 
-                if board[(x, y)] == 'b':
+                if tabuleiro[(x, y)] == 'b':
                     print('b|')
-                elif board[(x, y)] == 'p':
+                elif tabuleiro[(x, y)] == 'p':
                     print('p|')
-                elif board[(x, y)] == 'n':
+                elif tabuleiro[(x, y)] == 'n':
                     print('n|')
                 else:
                     print(' ')
