@@ -1,5 +1,6 @@
 
 import operator
+import jogos_iia
 
 class JogoHobbes(jogos_iia.Game) :
     """Representação para o jogo:
@@ -19,8 +20,15 @@ class JogoHobbes(jogos_iia.Game) :
         self.linhas = 5
         self.colunas = 5
 
+    @staticmethod
     def conv_peca(j):
         return 'p' if j == 'p' else 'b'
+
+    @staticmethod
+    def procura_jogador(tabuleiro, jogador):
+        for key in tabuleiro.keys():
+            if tabuleiro[key] == jogador:
+                return key
 
     #retorna jogadas possiveis de um dado estado
     def actions(self, state):
@@ -48,7 +56,7 @@ class JogoHobbes(jogos_iia.Game) :
 
             ja_passou[(x, y)] = True
 
-            generate_jogadas_1(self, ja_passou, pos_rei, jogadas)
+            generate_jogadas_1(ja_passou, pos_rei, jogadas)
 
             return jogadas
 
@@ -60,20 +68,20 @@ class JogoHobbes(jogos_iia.Game) :
             if (x - 1, y) not in tabuleiro and not (ja_passou[(x - 1, y)]):
                 jogadas.append((x - 1, y))
                 ja_passou[(x - 1, y)] = True
-                jogadas.extend(generate_jogadas_1(ja_passou, (x - 1, y), jogadas, tabuleiro))
+                jogadas.extend(generate_jogadas_1(ja_passou, (x - 1, y), jogadas))
 
             if (x + 1, y) not in tabuleiro and not(ja_passou[(x + 1, y)]):
                 jogadas.append((x + 1, y))
                 ja_passou[(x + 1, y)] = True
-                jogadas.extend(generate_jogadas_1(ja_passou, (x + 1, y), jogadas, tabuleiro))
+                jogadas.extend(generate_jogadas_1(ja_passou, (x + 1, y), jogadas))
             if (x, y + 1) not in tabuleiro and not (ja_passou[(x, y + 1)]):
                 jogadas.append((x, y + 1))
                 ja_passou[(x, y + 1)] = True
-                jogadas.extend(generate_jogadas_1(ja_passou, (x, y + 1), jogadas, tabuleiro))
+                jogadas.extend(generate_jogadas_1(ja_passou, (x, y + 1), jogadas))
             if (x, y - 1) not in tabuleiro and not (ja_passou[(x, y - 1)]):
                 jogadas.append((x, y - 1))
                 ja_passou[(x, y - 1)] = True
-                jogadas.extend(generate_jogadas_1(ja_passou, (x, y - 1), jogadas, tabuleiro))
+                jogadas.extend(generate_jogadas_1(ja_passou, (x, y - 1), jogadas))
 
             return jogadas
 
@@ -166,7 +174,7 @@ class JogoHobbes(jogos_iia.Game) :
             return jogadas
 
         pos_jogador = tabuleiro[jogador]
-        jogadas = gera_1a_parte(tabuleiro,  pos_jogador, list(pos_jogador))
+        jogadas = gera_1a_parte(tabuleiro, pos_jogador, list(pos_jogador))
 
         jogadas_completo = list()
 
@@ -177,38 +185,80 @@ class JogoHobbes(jogos_iia.Game) :
 
 
     #retorna estado que se obtem a fazer uma jogada
-        # retorna estado que se obtem a fazer uma jogada
-        def result(self, state, move):
-            return null
+    def result(self, state, move):
+        jogada_1 = move[0]
+        tabuleiro = state.board[1]
+        jogador = state.to_move
 
-        # Utilidade do estado, na perspectiva do jogador que tem a vez.  Rele-
-        # vante apenas para os estados finais:  1, -1, ou 0, consoante seja de vitoria,
-        # derrota ou empate.
-        def utility(self, state, jogador):
+        #1a jogada a fazer!
+        pos_jogador = procura_jogador(tabuleiro, jogador)
 
-            jog_peca = conv_peca(jogador)
-            adv_peca = 'b' if jog_peca == 'p' else 'p'
+        del tabuleiro[pos_jogador]
+        tabuleiro[jogada_1] = jogador
+        #1a jogada feita!
+        
+        #2a jogada a fazer!
+        jogada_2 = move[1]
+        result = tuple(map(operator.sub, jogada_2, jogada_1))
 
-        tabuleiro = state.board
-        string = ''
-        concat = ''
+        x = jogada_1[0]
+        y = jogada_1[1]
 
-        for x in range(1, self.linhas + 1):
-            for y in range(1, self.colunas + 1):
-                if tabuleiro[(x, y)] == 'b':
-                    string = 'b'
-                if tabuleiro[(x, y)] == 'p':
-                    string = 'p'
-                if string != '':
-                    concat = concat + string
-                    string = ''
+        if tabuleiro[jogada_2] == outro_jogador(jogador):
+            tabuleiro[jogada_2] = jogador
+            return state
+        
+        moveu = 'x' if result[1] == 0 else 'y'
 
-        if concat == jog_peca:
-            return 1
-        elif concat == adv_peca:
-            return -1
-        else:
-            return 0
+        if(moveu == 'x'):
+            if (x - 1, y) in tabuleiro:
+                del tabuleiro[(x-1,y)]
+                tabuleiro[(jogada_2[0]-1,y)] = 'n'
+            elif (x + 1, y) in tabuleiro:
+                del tabuleiro[(x+1,y)]
+                tabuleiro[(jogada_2[0]+1,y)] = 'n'
+        else:           
+            if (x, y-1) in tabuleiro:
+                del tabuleiro[(x,y-1)]
+                tabuleiro[(x,jogada_2[1]-1)] = 'n'
+            elif (x, y+1) in tabuleiro:
+                del tabuleiro[(x,y+1)]
+                tabuleiro[(x,jogada_2[1]+1)] = 'n'
+
+        tabuleiro[jogada_2] = jogador
+        #2a jogada feita!
+        state.to_move = outro_jogador(jogador)
+
+        return state
+
+    # Utilidade do estado, na perspectiva do jogador que tem a vez.  Rele-
+    # vante apenas para os estados finais:  1, -1, ou 0, consoante seja de vitoria,
+    # derrota ou empate.
+    def utility(self, state, jogador):
+
+        jog_peca = conv_peca(jogador)
+        adv_peca = 'b' if jog_peca == 'p' else 'p'
+
+    tabuleiro = state.board[1]
+    string = ''
+    concat = ''
+
+    for x in range(1, self.linhas + 1):
+        for y in range(1, self.colunas + 1):
+            if tabuleiro[(x, y)] == 'b':
+                string = 'b'
+            if tabuleiro[(x, y)] == 'p':
+                string = 'p'
+            if string != '':
+                concat = concat + string
+                string = ''
+
+    if concat == jog_peca:
+        return 1
+    elif concat == adv_peca:
+        return -1
+    else:
+        return 0
 
     # metodo booleano que verific se um dado estado é final
     def terminal_test(self, state):
@@ -238,12 +288,3 @@ class JogoHobbes(jogos_iia.Game) :
             print("Fim do jogo")
         else:
             print("Próximo jogador:{}\n".format(state.to_move))
-
-
-
-
-
-
-
-
-
