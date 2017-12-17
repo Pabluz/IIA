@@ -192,7 +192,7 @@ class JogoHobbes(jogos_iia.Game) :
     def result(self, state, move):
         jogada_1 = move[0]
         tabuleiro = state.board[1]
-        jogador = state.to_move
+        jogador = conv_pecinha(state.to_move)
 
         #1a jogada a fazer!
         pos_jogador = procura_jogador(tabuleiro, jogador)
@@ -209,7 +209,7 @@ class JogoHobbes(jogos_iia.Game) :
         y = jogada_1[1]
 
         if tabuleiro[jogada_2] == outro_jogador(jogador):
-            tabuleiro[jogada_2] = conv_pecinha(jogador)
+            tabuleiro[jogada_2] = jogador
             return state
         
         moveu = 'x' if result[1] == 0 else 'y'
@@ -229,9 +229,9 @@ class JogoHobbes(jogos_iia.Game) :
                 del tabuleiro[(x,y+1)]
                 tabuleiro[(x,jogada_2[1]+1)] = 'n'
 
-        tabuleiro[jogada_2] = conv_pecinha(jogador)
+        tabuleiro[jogada_2] = jogador
         #2a jogada feita!
-        state.to_move = outro_jogador(jogador)
+        state.to_move = outro_jogador(state.to_move)
 
         return state
 
