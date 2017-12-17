@@ -25,6 +25,10 @@ class JogoHobbes(jogos_iia.Game) :
         return 'p' if j == 'p' else 'b'
 
     @staticmethod
+    def conv_pecinha(j):
+        return 'p' if j == 'rei_preto' else 'b'
+
+    @staticmethod
     def procura_jogador(tabuleiro, jogador):
         for key in tabuleiro.keys():
             if tabuleiro[key] == jogador:
@@ -173,7 +177,7 @@ class JogoHobbes(jogos_iia.Game) :
 
             return jogadas
 
-        pos_jogador = tabuleiro[jogador]
+        pos_jogador = self.procura_jogador(tabuleiro, jogador)
         jogadas = gera_1a_parte(tabuleiro, pos_jogador, list(pos_jogador))
 
         jogadas_completo = list()
@@ -205,7 +209,7 @@ class JogoHobbes(jogos_iia.Game) :
         y = jogada_1[1]
 
         if tabuleiro[jogada_2] == outro_jogador(jogador):
-            tabuleiro[jogada_2] = jogador
+            tabuleiro[jogada_2] = conv_pecinha(jogador)
             return state
         
         moveu = 'x' if result[1] == 0 else 'y'
@@ -225,7 +229,7 @@ class JogoHobbes(jogos_iia.Game) :
                 del tabuleiro[(x,y+1)]
                 tabuleiro[(x,jogada_2[1]+1)] = 'n'
 
-        tabuleiro[jogada_2] = jogador
+        tabuleiro[jogada_2] = conv_pecinha(jogador)
         #2a jogada feita!
         state.to_move = outro_jogador(jogador)
 
