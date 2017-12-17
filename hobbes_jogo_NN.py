@@ -31,8 +31,8 @@ class JogoHobbes(jogos_iia.Game) :
 
             ja_passou = dict()
 
-            for (i in range(1, 6))
-                for (j in range(1, 6))
+            for i in range(1, 6):
+                for j in range(1, 6):
                     ja_passou[(i, j)] = False
 
             ja_passou[(x, y)] = True
@@ -72,7 +72,7 @@ class JogoHobbes(jogos_iia.Game) :
             jogadas = list()
 
             if (x - 1, y) in tabuleiro:
-                push = push_jogada(tabuleiro, (x , y)),'X','-')
+                push = push_jogada(tabuleiro, (x , y),'X','-')
                 pull = pull_jogada(tabuleiro, (x , y), 'X','-')
                 jogadas.extend(push)
                 jogadas.extend(pull)
@@ -91,10 +91,10 @@ class JogoHobbes(jogos_iia.Game) :
             x = pos_rei[0]
             y = pos_rei[1]
 
-            if(eixo = 'X')
+            if eixo = 'X':
                 while ((func(x,2), y) not in tabuleiro)
                     jogadas.append(pos_rei)
-            else
+            else:
                 while (x, (func(y, 2)) not in tabuleiro)
 
 
@@ -103,7 +103,7 @@ class JogoHobbes(jogos_iia.Game) :
         jogador = state.to_move
         if jogador == 'rei_branco':
             jogador = 'b'
-        else
+        else:
             jogador = 'p'
 
         pos_jogador = tabuleiro[jogador]
@@ -111,14 +111,14 @@ class JogoHobbes(jogos_iia.Game) :
 
         jogadas_completo = list()
 
-        for (x in in range(0, len(jogadas)))
+        for x in range(0, len(jogadas)):
             jogadas_completo.extend(gera_2a_jogada(self, tabuleiro, x, jogador))
 
         return jogadas_completo
 
 
     #retorna estado que se obtem a fazer uma jogada
-    def result(self, state,move):
+    def result(self, state, move):
         return null
 
 	#Utilidade do estado, na perspectiva do jogador que tem a vez.  Rele-
@@ -151,7 +151,7 @@ class JogoHobbes(jogos_iia.Game) :
 
     # metodo booleano que verific se um dado estado é final
     def terminal_test(self, state):
-        return null
+        return actions(state) == [] or self.num_jogadas == 50 or utility(state,'rei_preto') != 0
 
     # Mostra uma representação de um estado do jogo
     def display(self, state):
