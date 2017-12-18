@@ -22,10 +22,6 @@ class JogoHobbes(jogos_iia.Game) :
 
     @staticmethod
     def conv_peca(j):
-        return 'p' if j == 'p' else 'b'
-
-    @staticmethod
-    def conv_pecinha(j):
         return 'p' if j == 'rei_preto' else 'b'
 
     @staticmethod
@@ -33,6 +29,7 @@ class JogoHobbes(jogos_iia.Game) :
         for key in tabuleiro.keys():
             if tabuleiro[key] == jogador:
                 return key
+        return None
 
     #retorna jogadas possiveis de um dado estado
     def actions(self, state):
@@ -192,7 +189,7 @@ class JogoHobbes(jogos_iia.Game) :
     def result(self, state, move):
         jogada_1 = move[0]
         tabuleiro = state.board[1]
-        jogador = self.conv_pecinha(state.to_move)
+        jogador = self.conv_peca(state.to_move)
 
         #1a jogada a fazer!
         pos_jogador = self.procura_jogador(tabuleiro, jogador)
@@ -213,25 +210,27 @@ class JogoHobbes(jogos_iia.Game) :
             return state
         
         moveu = 'x' if result[1] == 0 else 'y'
+        del tabuleiro[(x,y)]
 
         if(moveu == 'x'):
-            if (x - 1, y) in tabuleiro:
-                del tabuleiro[(x-1,y)]
-                tabuleiro[(jogada_2[0]-1,y)] = 'n'
-            elif (x + 1, y) in tabuleiro:
-                del tabuleiro[(x+1,y)]
-                tabuleiro[(jogada_2[0]+1,y)] = 'n'
-        else:           
-            if (x, y-1) in tabuleiro:
-                del tabuleiro[(x,y-1)]
-                tabuleiro[(x,jogada_2[1]-1)] = 'n'
-            elif (x, y+1) in tabuleiro:
-                del tabuleiro[(x,y+1)]
-                tabuleiro[(x,jogada_2[1]+1)] = 'n'
+                if result[0] > 0:
+                    del tabuleiro[(x + 1, y)]
+                    tabuleiro[(jogada_2[0] + 1, y)] = 'n'
+                else:
+                    del tabuleiro[(x - 1, y)]
+                    tabuleiro[(jogada_2[0] - 1, y)] = 'n'
+        else:
+                if result[1] > 0:
+                    del tabuleiro[(x, y + 1)]
+                    tabuleiro[(x, jogada_2[1] + 1)] = 'n'
+                else:
+                    del tabuleiro[(x, y - 1)]
+                    tabuleiro[(x, jogada_2[1] - 1)] = 'n'
+
 
         tabuleiro[jogada_2] = jogador
         #2a jogada feita!
-        state.to_move = self.outro_jogador(state.to_move)
+        #state.to_move = self.outro_jogador(state.to_move)
 
         return state
 
@@ -239,30 +238,23 @@ class JogoHobbes(jogos_iia.Game) :
     # vante apenas para os estados finais:  1, -1, ou 0, consoante seja de vitoria,
     # derrota ou empate.
     def utility(self, state, jogador):
+        tabuleiro = state.board[1]
 
         jog_peca = self.conv_peca(jogador)
         adv_peca = 'b' if jog_peca == 'p' else 'p'
 
-        tabuleiro = state.board[1]
-        string = ''
-        concat = ''
+        pos_jog= self.procura_jogador(tabuleiro,jog_peca)
+        pos_peca = self.procura_jogador(tabuleiro,  adv_peca)
 
-        for x in range(1, self.linhas + 1):
-            for y in range(1, self.colunas + 1):
-                if tabuleiro[(x, y)] == 'b':
-                    string = 'b'
-                if tabuleiro[(x, y)] == 'p':
-                    string = 'p'
-                if string != '':
-                    concat = concat + string
-                    string = ''
-
-        if concat == jog_peca:
-            return 1
-        elif concat == adv_peca:
+        if pos_jog == None:
             return -1
-        else:
-            return 0
+        elif pos_peca == None:
+            return 1
+
+        if self.actions(state) == []:
+            return -1 if state.to_move == jogador else 1
+
+        return 0
 
     # metodo booleano que verific se um dado estado é final
     def terminal_test(self, state):
@@ -273,9 +265,9 @@ class JogoHobbes(jogos_iia.Game) :
 
         tabuleiro = state.board[1]
         print("Tabuleiro actual:")
-        for x in range(1, self.linhas + 1):
+        for y in range(1, self.linhas + 1):
             print('|', end='')
-            for y in range(1, self.colunas + 1):
+            for x in range(1, self.colunas + 1):
                 if(x, y) in tabuleiro:
                     if tabuleiro[(x, y)] == 'b':
                         print('b|', end='')
@@ -287,7 +279,7 @@ class JogoHobbes(jogos_iia.Game) :
                      print(' |', end='')
             print('\n -----------',)
 
-       # if self.terminal_test(state):
-        #    print("Fim do jogo")
+        if self.terminal_test(state):
+          print("Fim do jogo")
         else:
             print("Próximo jogador:{}\n".format(state.to_move))
