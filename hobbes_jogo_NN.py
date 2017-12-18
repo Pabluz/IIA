@@ -1,4 +1,3 @@
-
 import operator
 import jogos_iia
 
@@ -8,7 +7,7 @@ class JogoHobbes(jogos_iia.Game) :
     ops = {"+": operator.add,
            "-": operator.sub,
            "*": operator.mul,
-           "/": operator.div}
+           "/": operator.__floordiv__}
 
 
     @staticmethod
@@ -243,26 +242,26 @@ class JogoHobbes(jogos_iia.Game) :
         jog_peca = conv_peca(jogador)
         adv_peca = 'b' if jog_peca == 'p' else 'p'
 
-    tabuleiro = state.board[1]
-    string = ''
-    concat = ''
+        tabuleiro = state.board[1]
+        string = ''
+        concat = ''
 
-    for x in range(1, self.linhas + 1):
-        for y in range(1, self.colunas + 1):
-            if tabuleiro[(x, y)] == 'b':
-                string = 'b'
-            if tabuleiro[(x, y)] == 'p':
-                string = 'p'
-            if string != '':
-                concat = concat + string
-                string = ''
+        for x in range(1, self.linhas + 1):
+            for y in range(1, self.colunas + 1):
+                if tabuleiro[(x, y)] == 'b':
+                    string = 'b'
+                if tabuleiro[(x, y)] == 'p':
+                    string = 'p'
+                if string != '':
+                    concat = concat + string
+                    string = ''
 
-    if concat == jog_peca:
-        return 1
-    elif concat == adv_peca:
-        return -1
-    else:
-        return 0
+        if concat == jog_peca:
+            return 1
+        elif concat == adv_peca:
+            return -1
+        else:
+            return 0
 
     # metodo booleano que verific se um dado estado é final
     def terminal_test(self, state):
