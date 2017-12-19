@@ -1,4 +1,3 @@
-from __future__ import print_function
 import operator
 import jogos_iia
 class JogoHobbes(jogos_iia.Game) :
@@ -23,7 +22,6 @@ class JogoHobbes(jogos_iia.Game) :
         movimentos = moves
         initial = initial
 
-    
     @staticmethod
     def outro_jogador(j) :
         return 'rei_preto' if j == 'rei_branco' else 'rei_branco'
@@ -158,7 +156,6 @@ class JogoHobbes(jogos_iia.Game) :
 
             return jogadas
 
-
         def pull_jogada(pos_rei, eixo,op):
             func = self.ops[op]
             jogadas = list()
@@ -187,7 +184,6 @@ class JogoHobbes(jogos_iia.Game) :
             jogadas_completo.extend(gera_2a_jogada(jogadas[x]))
 
         return jogadas_completo
-
 
     #retorna estado que se obtem a fazer uma jogada
     def result(self, state, move):
@@ -234,7 +230,7 @@ class JogoHobbes(jogos_iia.Game) :
 
         tabuleiro[jogada_2] = jogador
         #2a jogada feita!
-        state.to_move = self.outro_jogador(state.to_move)
+        state.to_move = self.outro_jogador(state.to_move) #FIXME: nao deixa alterar o atributo da class!
 
         return state
 
