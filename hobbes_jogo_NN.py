@@ -1,7 +1,6 @@
-
+from __future__ import print_function
 import operator
 import jogos_iia
-
 class JogoHobbes(jogos_iia.Game) :
     """Representação para o jogo:
     """
@@ -9,7 +8,7 @@ class JogoHobbes(jogos_iia.Game) :
            "-": operator.sub}
     linhas = 5
     colunas = 5
-    jogadores = ('rei_preto,rei_branco')
+    jogadores = ('rei_preto','rei_branco')
 
 
     board = {(2, 1): 'n', (2, 2): 'n', (2, 4): 'n', (2, 5): 'n',
@@ -27,7 +26,7 @@ class JogoHobbes(jogos_iia.Game) :
     
     @staticmethod
     def outro_jogador(j) :
-        return 'rei_preto' if j == 'rei_branco' else 'rei_preto'
+        return 'rei_preto' if j == 'rei_branco' else 'rei_branco'
 
 
     @staticmethod
@@ -46,13 +45,8 @@ class JogoHobbes(jogos_iia.Game) :
 
         tabuleiro = state.board[1] #atribuicao do tabuleiro
 
-        jogador = state.to_move
-        if jogador == 'rei_branco':
-            jogador = 'b'
-            outro_jogador = 'p'
-        else:
-            jogador = 'p'
-            outro_jogador = 'b'
+        jogador = self.conv_peca(state.to_move)
+        adversario = self.conv_peca(self.outro_jogador(jogador))
 
         def gera_1a_parte( pos_rei, jogadas):
 
@@ -61,8 +55,8 @@ class JogoHobbes(jogos_iia.Game) :
 
             ja_passou = dict()
 
-            for i in range(1, 6):
-                for j in range(1, 6):
+            for i in range(1, self.linhas + 1):
+                for j in range(1, self.colunas + 1):
                     ja_passou[(i, j)] = False
 
             ja_passou[(x, y)] = True
@@ -104,7 +98,7 @@ class JogoHobbes(jogos_iia.Game) :
             jogadas = list()
 
             if (x - 1, y) in tabuleiro:
-                if tabuleiro [(x - 1, y)] == outro_jogador:
+                if tabuleiro [(x - 1, y)] == adversario:
                     jogadas.append((x - 1, y))
 
                 else:
@@ -114,7 +108,7 @@ class JogoHobbes(jogos_iia.Game) :
                     jogadas.extend(pull)
 
             if (x + 1, y) in tabuleiro:
-                if tabuleiro[(x + 1, y)] == outro_jogador:
+                if tabuleiro[(x + 1, y)] == adversario:
                     jogadas.append((x + 1, y))
 
                 else:
@@ -124,7 +118,7 @@ class JogoHobbes(jogos_iia.Game) :
                     jogadas.extend(pull)
 
             if (x, y + 1) in tabuleiro:
-                if tabuleiro[(x, y + 1)] == outro_jogador:
+                if tabuleiro[(x, y + 1)] == adversario:
                     jogadas.append((x, y + 1))
 
                 else:
@@ -134,7 +128,7 @@ class JogoHobbes(jogos_iia.Game) :
                     jogadas.extend(pull)
 
             if (x, y - 1) in tabuleiro:
-                if tabuleiro[(x, y - 1)] == outro_jogador:
+                if tabuleiro[(x, y - 1)] == adversario:
                     jogadas.append((x, y - 1))
 
                 else:
@@ -263,7 +257,7 @@ class JogoHobbes(jogos_iia.Game) :
 
         if self.actions(state) == []:
             return -1 if state.to_move == jogador else 1
-
+    
         return 0
 
     # metodo booleano que verific se um dado estado é final
@@ -275,6 +269,7 @@ class JogoHobbes(jogos_iia.Game) :
 
         tabuleiro = state.board[1]
         print("Tabuleiro actual:")
+        print('-----------')
         for y in range(1, self.linhas + 1):
             print('|', end='')
             for x in range(1, self.colunas + 1):
@@ -287,7 +282,7 @@ class JogoHobbes(jogos_iia.Game) :
                         print('n|', end='')
                 else:
                      print(' |', end='')
-            print('\n -----------',)
+            print('\n-----------')
 
         if self.terminal_test(state):
           print("Fim do jogo")
