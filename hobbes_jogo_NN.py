@@ -234,7 +234,7 @@ class JogoHobbes(jogos_iia.Game) :
 
         tabuleiro[jogada_2] = jogador
         #2a jogada feita!
-        #state.to_move = self.outro_jogador(state.to_move)
+        state.to_move = self.outro_jogador(state.to_move)
 
         return state
 
@@ -271,17 +271,17 @@ class JogoHobbes(jogos_iia.Game) :
         print("Tabuleiro actual:")
         print('-----------')
         for y in range(1, self.linhas + 1):
-            print('|', end='')
+            print('|')
             for x in range(1, self.colunas + 1):
                 if(x, y) in tabuleiro:
                     if tabuleiro[(x, y)] == 'b':
-                        print('b|', end='')
+                        print('b|')
                     elif tabuleiro[(x, y)] == 'p':
-                        print('p|', end='')
+                        print('p|')
                     elif tabuleiro[(x, y)] == 'n':
-                        print('n|', end='')
+                        print('n|')
                 else:
-                     print(' |', end='')
+                     print(' |')
             print('\n-----------')
 
         if self.terminal_test(state):
