@@ -304,6 +304,7 @@ class JogoHobbes(jogos_iia.Game):
         else:
             print("Próximo jogador:{}\n".format(state.to_move))
 
+######################################### Heuristicas #############################################
     def f_numero_jogadas(state): #quanto mais, pior
         #return operator.mul(operator.div(1,state.board[0]),100)
         return ((1/(state.board[0]))*100) #FIXME: assim? com percentagem?
