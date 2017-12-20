@@ -1,7 +1,7 @@
 import jogar
-import hobbes_jogo_NN
+import hobbes_jogo_50
 
-jogo_hobbes = hobbes_jogo_NN.JogoHobbes()
+jogo_hobbes = hobbes_jogo_50.JogoHobbes()
 
 j1 = jogar.Jogador(jogo_hobbes,"Ze",f = jogar.random_player)
 j2 = jogar.Jogador(jogo_hobbes,"Ao Calhas",f = jogar.random_player)

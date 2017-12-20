@@ -41,9 +41,8 @@ class JogoHobbes(jogos_iia.Game):
         return None
 
     def do_actions(self, tabuleiro, jogador):
-
         jogador = self.conv_peca(jogador)
-        adversario = self.conv_peca(self.outro_jogador(jogador))
+        adversario = self.outro_jogador_conv(jogador)
 
         def gera_1a_parte(pos_rei, jogadas):  #FIXME:
 
@@ -60,8 +59,8 @@ class JogoHobbes(jogos_iia.Game):
             x = pos_rei[0]
             y = pos_rei[1]
 
-            if (pos_rei not in tabuleiro and self.linhas >= x > 0 and self.linhas >= y > 0 and not ja_passou[pos_rei]) \
-                or (pos_rei in tabuleiro and self.conversor[tabuleiro[pos_rei]] in (self.jogadores[0], self.jogadores[1])):
+            if (pos_rei in ja_passou and not ja_passou[pos_rei]) and ((pos_rei not in tabuleiro ) \
+                or (pos_rei in tabuleiro and tabuleiro[pos_rei] == jogador)):
                 ja_passou[pos_rei] = True
             else:
                 return []
@@ -78,43 +77,54 @@ class JogoHobbes(jogos_iia.Game):
 
             jogadas = list()
 
-            if (x - 1, y) in tabuleiro:
+            print('o adversario e' + adversario)
+            print('o jogador e' + jogador)
+
+            if (x - 1, y) in tabuleiro and tabuleiro[(x - 1, y)] != jogador:
                 if tabuleiro[(x - 1, y)] == adversario:
                     jogadas.append((x - 1, y))
+                    print(tabuleiro[(x - 1, y)] + 'adversario')
 
                 else:
+                    print(tabuleiro[(x - 1, y)])
                     push = push_jogada((x, y), 'X', '-')
-                    pull = pull_jogada((x, y), 'X', '-')
-                    jogadas.extend(push)
-                    jogadas.extend(pull)
-
-            if (x + 1, y) in tabuleiro:
-                if tabuleiro[(x + 1, y)] == adversario:
-                    jogadas.append((x + 1, y))
-
-                else:
-                    push = push_jogada((x, y), 'X', '+')
                     pull = pull_jogada((x, y), 'X', '+')
                     jogadas.extend(push)
                     jogadas.extend(pull)
 
-            if (x, y + 1) in tabuleiro:
-                if tabuleiro[(x, y + 1)] == adversario:
-                    jogadas.append((x, y + 1))
+            if (x + 1, y) in tabuleiro and tabuleiro[(x + 1, y)] != jogador:
+                if tabuleiro[(x + 1, y)] == adversario:
+                    jogadas.append((x + 1, y))
+                    print(tabuleiro[(x + 1, y)]+'adversario')
 
                 else:
-                    push = push_jogada((x, y), 'Y', '+')
-                    pull = pull_jogada((x, y), 'Y', '+')
+                    print(tabuleiro[(x + 1, y)])
+                    push = push_jogada((x, y), 'X', '+')
+                    pull = pull_jogada((x, y), 'X', '-')
                     jogadas.extend(push)
                     jogadas.extend(pull)
 
-            if (x, y - 1) in tabuleiro:
-                if tabuleiro[(x, y - 1)] == adversario:
-                    jogadas.append((x, y - 1))
+            if (x, y + 1) in tabuleiro and tabuleiro[(x, y + 1)] != jogador:
+                if tabuleiro[(x, y + 1)] == adversario:
+                    print(tabuleiro[(x, y + 1)]+'adversario')
+                    jogadas.append((x, y + 1))
 
                 else:
-                    push = push_jogada((x, y), 'Y', '-')
+                    print(tabuleiro[(x, y + 1)])
+                    push = push_jogada((x, y), 'Y', '+')
                     pull = pull_jogada((x, y), 'Y', '-')
+                    jogadas.extend(push)
+                    jogadas.extend(pull)
+
+            if (x, y - 1) in tabuleiro and tabuleiro[(x, y - 1)] != jogador:
+                if tabuleiro[(x, y - 1)] == adversario:
+                    jogadas.append((x, y - 1))
+                    print(tabuleiro[(x, y - 1)]+ 'adversario')
+
+                else:
+                    print(tabuleiro[(x, y - 1)])
+                    push = push_jogada((x, y), 'Y', '-')
+                    pull = pull_jogada((x, y), 'Y', '+')
                     jogadas.extend(push)
                     jogadas.extend(pull)
 
@@ -132,10 +142,12 @@ class JogoHobbes(jogos_iia.Game):
                     x = func(x, 1)
                     jogadas.append((x, y))
 
+
             else:
                 while (x, (func(y, 2))) not in tabuleiro and func(y, 2) > 0 and func(y, 2) <= 5:
                     y = func(y, 1)
                     jogadas.append((x, y))
+
 
             return jogadas
 
@@ -151,10 +163,12 @@ class JogoHobbes(jogos_iia.Game):
                     x = func(x, 1)
                     jogadas.append((x, y))
 
+
             else:
                 while (x, (func(y, 1))) not in tabuleiro and func(y, 1) > 0 and func(y, 1) <= 5:
                     y = func(y, 1)
                     jogadas.append((x, y))
+
 
             return jogadas
 
@@ -165,9 +179,9 @@ class JogoHobbes(jogos_iia.Game):
 
         jogadas = gera_1a_parte(pos_jogador, [pos_jogador])
         jogadas_completo = list()
-
-        for x in range(0, len(jogadas)):
-            jogadas_completo.extend(gera_2a_jogada(jogadas[x]))
+        print(jogadas)
+        for x in jogadas:
+            jogadas_completo.extend(gera_2a_jogada(x))
         print(jogadas_completo)
         return jogadas_completo
 
@@ -177,6 +191,7 @@ class JogoHobbes(jogos_iia.Game):
 
     # retorna estado que se obtem a fazer uma jogada
     def result(self, state, move):
+        print(move)
         jogada_1 = move[0]
         tabuleiro = state.board[1]
         jogador = self.conv_peca(state.to_move)
@@ -197,32 +212,31 @@ class JogoHobbes(jogos_iia.Game):
         x = jogada_1[0]
         y = jogada_1[1]
 
-        if jogada_2 in tabuleiro_novo and tabuleiro_novo[jogada_2] == self.outro_jogador(jogador):
+        if jogada_2 in tabuleiro_novo and tabuleiro_novo[jogada_2] == self.outro_jogador_conv(jogador):
+            del tabuleiro_novo[jogada_1]
             tabuleiro_novo[jogada_2] = jogador
             to_move_new = self.outro_jogador(state.to_move)
-            moves_new = self.do_actions(tabuleiro_novo, to_move_new)
-            utilidade_new = self.do_utility(tabuleiro_novo, to_move_new, moves_new)
+            utilidade_new = self.do_utility(tabuleiro_novo, to_move_new, [])
             jogadas = state.board[0] + 1
-            new_state = jogos_iia.GameState(to_move_new, utilidade_new, (jogadas, tabuleiro_novo), moves_new)
+            new_state = jogos_iia.GameState(to_move_new, utilidade_new, (jogadas, tabuleiro_novo), [])
             return new_state
 
         moveu = 'x' if result[1] == 0 else 'y'
         del tabuleiro_novo[(x, y)]
-
         if (moveu == 'x'):
             if result[0] > 0:
                 if (x + 1, y) in tabuleiro_novo:
                     del tabuleiro_novo[(x + 1, y)]
                     tabuleiro_novo[(jogada_2[0] + 1, y)] = 'n'
                 else:
-                    #del tabuleiro_novo[(x - 1, y)]
+                    del tabuleiro_novo[(x - 1, y)]
                     tabuleiro_novo[(jogada_2[0] - 1, y)] = 'n'
             else:
                 if (x - 1, y) in tabuleiro_novo:
                     del tabuleiro_novo[(x - 1, y)]
                     tabuleiro_novo[(jogada_2[0] - 1, y)] = 'n'
                 else:
-                    #del tabuleiro_novo[(x + 1, y)]
+                    del tabuleiro_novo[(x + 1, y)]
                     tabuleiro_novo[(jogada_2[0] + 1, y)] = 'n'
         else:
             if result[1] > 0:
@@ -230,14 +244,14 @@ class JogoHobbes(jogos_iia.Game):
                     del tabuleiro_novo[(x, y + 1)]
                     tabuleiro_novo[(x, jogada_2[1] + 1)] = 'n'
                 else:
-                    #del tabuleiro_novo[(x, y - 1)]
+                    del tabuleiro_novo[(x, y - 1)]
                     tabuleiro_novo[(x, jogada_2[1] - 1)] = 'n'
             else:
                 if (x, y - 1) in tabuleiro_novo:
                     del tabuleiro_novo[(x, y - 1)]
                     tabuleiro_novo[(x, jogada_2[1] - 1)] = 'n'
                 else:
-                    #del tabuleiro_novo[(x, y + 1)]
+                    del tabuleiro_novo[(x, y + 1)]
                     tabuleiro_novo[(x, jogada_2[1] + 1)] = 'n'
 
         tabuleiro_novo[jogada_2] = jogador
