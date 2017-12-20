@@ -307,6 +307,7 @@ class JogoHobbes(jogos_iia.Game):
     def f_numero_jogadas(state): #quanto mais, pior
         #return operator.mul(operator.div(1,state.board[0]),100)
         return ((1/(state.board[0]))*100) #FIXME: assim? com percentagem?
+        #nao estamos a verificar jogador a jogador.. apenas as jogadas do jogo
 
     def f_ataque(state, jog): #quanto mais, melhor
         adv = outro_jogador_conv(jog)
@@ -328,6 +329,27 @@ class JogoHobbes(jogos_iia.Game):
         (x_jog,y_jog) = procura_jogador(state, jog)
         (x_adv,y_adv) = procura_jogador(state, adv)
         return (((x_jog - x_adv)**2)+((y_jog - y_adv)**2))**(0.5)
+
+    def f_prisao(state, jog): #quanto mais, pior
+        adv = outro_jogador_conv(jog)
+        
+        def conta_barreiras(state, jog):
+            (x_jog,y_jog) = procura_jogador(state, jog)
+            soma = 0
+            if((x_jog+1,y_jog) == 'n' or (x_jog+1 > 5)):
+                soma++
+            elif((x_jog-1,y_jog) == 'n' or (x_jog-1 < 1)):
+                soma++
+            elif((x_jog,y_jog+1) == 'n' or (y_jog+1 > 5)):
+                soma++
+            elif((x_jog,y_jog-1) == 'n' or (y_jog-1 < 1)):
+                soma++
+            return soma
+        
+        soma_jog = conta_barreiras(state, jog)
+        soma_adv = conta_barreiras(state, adv)
+        return soma_adv - soma_jog
+
     
             
 
