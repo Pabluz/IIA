@@ -30,6 +30,10 @@ class JogoHobbes(jogos_iia.Game):
         return 'p' if j == 'rei_preto' else 'b'
 
     @staticmethod
+    def outro_jogador_conv(j):
+        return 'p' if j == 'b' else 'b'    
+
+    @staticmethod
     def procura_jogador(tabuleiro, jogador):
         for key in tabuleiro.keys():
             if tabuleiro[key] == jogador:
@@ -41,7 +45,7 @@ class JogoHobbes(jogos_iia.Game):
         jogador = self.conv_peca(jogador)
         adversario = self.conv_peca(self.outro_jogador(jogador))
 
-        def gera_1a_parte(pos_rei, jogadas):  # fixme
+        def gera_1a_parte(pos_rei, jogadas):  #FIXME:
 
             ja_passou = dict()
 
@@ -299,3 +303,32 @@ class JogoHobbes(jogos_iia.Game):
             print("Fim do jogo")
         else:
             print("Próximo jogador:{}\n".format(state.to_move))
+
+    def f_numero_jogadas(state): #quanto mais, pior
+        #return operator.mul(operator.div(1,state.board[0]),100)
+        return ((1/(state.board[0]))*100) #FIXME: assim? com percentagem?
+
+    def f_ataque(state, jog): #quanto mais, melhor
+        adv = outro_jogador_conv(jog)
+        y_jog = procura_jogador(state, jog)[1]
+        y_adv = procura_jogador(state, adv)[1]
+        if jogador == 'p':
+            return abs(5-y_jog)-abs(1-y_adv)
+        else:
+            return abs(1-y_jog)-abs(5-y_adv)
+
+    def f_defesa(state, jog): #quanto mais, pior
+        adv = outro_jogador_conv(jog)
+        x_jog = procura_jogador(state, jog)[0]
+        x_adv = procura_jogador(state, adv)[0]
+        return abs(3-x_adv)-abs(3-x_jog)
+
+    def f_distancia_reis(state, jog): #quanto mais, melhor
+        adv = outro_jogador_conv(jog)
+        (x_jog,y_jog) = procura_jogador(state, jog)
+        (x_adv,y_adv) = procura_jogador(state, adv)
+        return (((x_jog - x_adv)**2)+((y_jog - y_adv)**2))**(0.5)
+    
+            
+
+    
