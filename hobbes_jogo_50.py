@@ -290,9 +290,9 @@ class JogoHobbes(jogos_iia.Game):
         tabuleiro = state.board[1]
         print("Tabuleiro actual:")
         print('-----------')
-        for y in range(1, self.linhas + 1):
+        for y in range(self.linhas,0,-1):
             print('|', end='')
-            for x in range(1, self.colunas + 1):
+            for x in range(self.linhas,0,-1):
                 if (x, y) in tabuleiro:
                     if tabuleiro[(x, y)] == 'b':
                         print('b|', end='')
