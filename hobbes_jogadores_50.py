@@ -12,15 +12,15 @@ def f_ataque(state, jogador): #quanto mais, melhor
         return abs(1-y_jog)
 
 def f_defesa(state, jog): #quanto mais, pior
-    jog = hobbes_jogo_50.JogoHobbes.conv_peca(jogador)
+    jog = hobbes_jogo_50.JogoHobbes.conv_peca(jog)
     x_jog = hobbes_jogo_50.JogoHobbes.procura_jogador(state, jog)[0]
     return -abs(3-x_jog)
 
 def f_distancia_reis(state, jog): #quanto mais, melhor
-    jog = hobbes_jogo_50.JogoHobbes.conv_peca(jogador)
+    jog = hobbes_jogo_50.JogoHobbes.conv_peca(jog)
     adv = hobbes_jogo_50.JogoHobbes.outro_jogador_conv(jog)
-    (x_jog,y_jog) = hobbes_jogo_50.JogoHobbes.JogoHobbes.procura_jogador(state, jog)
-    (x_adv,y_adv) = hobbes_jogo_50.JogoHobbes.JogoHobbes.procura_jogador(state, adv)
+    (x_jog,y_jog) = hobbes_jogo_50.JogoHobbes.procura_jogador(state, jog)
+    (x_adv,y_adv) = hobbes_jogo_50.JogoHobbes.procura_jogador(state, adv)
     return (((x_jog - x_adv)**2)+((y_jog - y_adv)**2))**(0.5)
 
 def f_prisao(state, jogador): #quanto mais, pior
