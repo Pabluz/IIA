@@ -38,7 +38,7 @@ class JogoHobbes(jogos_iia.Game):
         for key in tabuleiro.keys():
             if tabuleiro[key] == jogador:
                 return key
-        return None
+        return (-1,-1)
 
     def do_actions(self, tabuleiro, jogador):
         jogador = self.conv_peca(jogador)
@@ -77,16 +77,11 @@ class JogoHobbes(jogos_iia.Game):
 
             jogadas = list()
 
-            print('o adversario e' + adversario)
-            print('o jogador e' + jogador)
-
             if (x - 1, y) in tabuleiro and tabuleiro[(x - 1, y)] != jogador:
                 if tabuleiro[(x - 1, y)] == adversario:
                     jogadas.append((x - 1, y))
-                    print(tabuleiro[(x - 1, y)] + 'adversario')
 
                 else:
-                    print(tabuleiro[(x - 1, y)])
                     push = push_jogada((x, y), 'X', '-')
                     pull = pull_jogada((x, y), 'X', '+')
                     jogadas.extend(push)
@@ -95,10 +90,8 @@ class JogoHobbes(jogos_iia.Game):
             if (x + 1, y) in tabuleiro and tabuleiro[(x + 1, y)] != jogador:
                 if tabuleiro[(x + 1, y)] == adversario:
                     jogadas.append((x + 1, y))
-                    print(tabuleiro[(x + 1, y)]+'adversario')
 
                 else:
-                    print(tabuleiro[(x + 1, y)])
                     push = push_jogada((x, y), 'X', '+')
                     pull = pull_jogada((x, y), 'X', '-')
                     jogadas.extend(push)
@@ -106,11 +99,9 @@ class JogoHobbes(jogos_iia.Game):
 
             if (x, y + 1) in tabuleiro and tabuleiro[(x, y + 1)] != jogador:
                 if tabuleiro[(x, y + 1)] == adversario:
-                    print(tabuleiro[(x, y + 1)]+'adversario')
                     jogadas.append((x, y + 1))
 
                 else:
-                    print(tabuleiro[(x, y + 1)])
                     push = push_jogada((x, y), 'Y', '+')
                     pull = pull_jogada((x, y), 'Y', '-')
                     jogadas.extend(push)
@@ -119,10 +110,8 @@ class JogoHobbes(jogos_iia.Game):
             if (x, y - 1) in tabuleiro and tabuleiro[(x, y - 1)] != jogador:
                 if tabuleiro[(x, y - 1)] == adversario:
                     jogadas.append((x, y - 1))
-                    print(tabuleiro[(x, y - 1)]+ 'adversario')
 
                 else:
-                    print(tabuleiro[(x, y - 1)])
                     push = push_jogada((x, y), 'Y', '-')
                     pull = pull_jogada((x, y), 'Y', '+')
                     jogadas.extend(push)
@@ -138,13 +127,15 @@ class JogoHobbes(jogos_iia.Game):
             y = pos_rei[1]
 
             if eixo == 'X':
-                while (func(x, 2), y) not in tabuleiro and func(x, 2) > 0 and func(x, 2) <= 5:
+                while (func(x, 2) > 0 and func(x, 2) <= 5) and ((func(x, 2), y) not in tabuleiro or \
+                        tabuleiro[(func(x, 2), y)] == jogador):
                     x = func(x, 1)
                     jogadas.append((x, y))
 
 
             else:
-                while (x, (func(y, 2))) not in tabuleiro and func(y, 2) > 0 and func(y, 2) <= 5:
+                while  (func(y, 2) > 0 and func(y, 2) <= 5) and (((x, func(y, 2)) not in tabuleiro) or \
+                        tabuleiro[(x, func(y, 2))] == jogador):
                     y = func(y, 1)
                     jogadas.append((x, y))
 
@@ -159,13 +150,15 @@ class JogoHobbes(jogos_iia.Game):
             y = pos_rei[1]
 
             if eixo == 'X':
-                while (func(x, 1), y) not in tabuleiro and func(x, 1) > 0 and func(x, 1) <= 5:
+                while (func(x, 1) > 0 and func(x, 1) <= 5)and ((func(x, 1), y) not in tabuleiro\
+                        or tabuleiro[(func(x, 1), y)] == jogador):
                     x = func(x, 1)
                     jogadas.append((x, y))
 
 
             else:
-                while (x, (func(y, 1))) not in tabuleiro and func(y, 1) > 0 and func(y, 1) <= 5:
+                while (func(y, 1) > 0 and func(y, 1) <= 5) and ((x,(func(y, 1))) not in tabuleiro\
+                    or tabuleiro[(x, (func(y, 1)))] == jogador):
                     y = func(y, 1)
                     jogadas.append((x, y))
 
@@ -174,15 +167,14 @@ class JogoHobbes(jogos_iia.Game):
 
         pos_jogador = self.procura_jogador(tabuleiro, jogador)
 
-        if pos_jogador is None:
+        if pos_jogador == (-1,-1):
             return []
 
         jogadas = gera_1a_parte(pos_jogador, [pos_jogador])
         jogadas_completo = list()
-        print(jogadas)
         for x in jogadas:
             jogadas_completo.extend(gera_2a_jogada(x))
-        print(jogadas_completo)
+
         return jogadas_completo
 
     # retorna jogadas possiveis de um dado estado
@@ -191,7 +183,6 @@ class JogoHobbes(jogos_iia.Game):
 
     # retorna estado que se obtem a fazer uma jogada
     def result(self, state, move):
-        print(move)
         jogada_1 = move[0]
         tabuleiro = state.board[1]
         jogador = self.conv_peca(state.to_move)
